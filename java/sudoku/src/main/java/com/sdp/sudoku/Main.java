@@ -4,20 +4,11 @@
 package com.sdp.sudoku;
 
 import com.sdp.sudoku.config.CDG;
-import com.sdp.sudoku.config.CFG;
-import com.sdp.sudoku.io.Input;
-import com.sdp.sudoku.io.Output;
-import com.sdp.sudoku.tablero.Board;
-import com.sdp.sudoku.tablero.BoardFactory;
-import com.sdp.sudoku.tablero.Square;
-
-import java.util.List;
-import java.util.Set;
+import com.sdp.sudoku.io.*;
+import com.sdp.sudoku.tablero.*;
 
 public class Main {
-    public String getGreeting() {
-        return "Hello World!";
-    }
+    Output out = Output.getInstance();
 
     public static void main(String[] args) {
         Main app = new Main();
@@ -33,37 +24,46 @@ public class Main {
     }
 
     private int play (Board board) {
-        Output output;
-        Square[] current = board.getCurrentBoard();
-        Square option = board.getCandidate();
-        int card = option.cardinality();
-        while (card != 0) {
-           output = new Output();
-           switch (card) {
-               case 1:
-                   option.setValue(0);
-                   board.round(option);
-                   output.setMessage("Cardinalidad 1");
-                   output.setMessage("Jugando casilla " + option.getPos());
-                   output.setMessage("Jugando valor " + option.getValue());
-                   output.print(board.getCurrentBoard());
-                   break;
-               default: return CDG.FAIL;
-           }
-            option = board.getCandidate();
-            card = option.cardinality();
-        }
+        Board pBoard;
 
+        while (true) {
+            Square option = board.getCandidate();
+            int card = option.cardinality();
+            switch (card) {
+                case 0: return CDG.DONE;
+                case 1:
+                    out.setMessage("Obtenida opcion de cardinalidad 1");
+                    out.setMessage("Casilla: " + option.getPos());
+                    roundSimple(board, option); break;
+                default:
+                    out.setMessage("Obtenida opcion de cardinalidad: " +  card);
+                    out.setMessage("Casilla: " + option.getPos());
+
+                    for (int i = 0; i < option.cardinality(); i++) {
+                        pBoard = board.copy();
+                        board.bet(i);
+                        // Ponemos el valor como unica opcion
+                        rc = play(pBoard);
+                    }
+            }
+        }
         return CDG.DONE;
     }
     private Board prepareBoard(Integer[] data) {
         BoardFactory factory = new BoardFactory();
-        Output output = new Output();
+
         Board board = factory.getBoard(data);
         board.init();
-        output.setBoard(board.getCurrentBoard());
-        output.setMessage("Situacion inicial");
-        output.print();
+        out.setMessage("Situacion inicial");
+        out.print(board.getCurrentBoard());
+        return board;
+    }
+    private Board roundSimple(Board board, Square option) {
+        option.setValue(0);
+        board.round(option);
+        out.setMessage("Jugando casilla " + option.getPos());
+        out.setMessage("Jugando valor " + option.getValue());
+        out.print(board.getCurrentBoard());
         return board;
     }
 }

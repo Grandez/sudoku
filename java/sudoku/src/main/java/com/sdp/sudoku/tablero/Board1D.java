@@ -4,11 +4,14 @@ import com.sdp.sudoku.config.CFG;
 
 import java.util.Arrays;
 
-public class Board1D implements Board {
+public class Board1D implements Board, Cloneable {
     Square[] squares = new Square[CFG.CARD];
     Square[] current = new Square[CFG.CARD];
     Square playing;
     int last;
+
+    private Board1D() {
+    }
 
     public Board1D(Integer[] data) {
         int i;
@@ -18,19 +21,15 @@ public class Board1D implements Board {
         }
     }
     public void round (Square square) {
-        if (playing != null) {
-            playing.setPlayed();
-        }
+        if (playing != null) playing.setPlayed();
         this.playing = square;
-         // La casilla ya tiene el valor
-         // Quitarlo de donde proceda
         for (int i = 0; i < squares.length; i++) {
             squares[i].setUsed(square.getValue());
         }
         recalculateBoard();
     }
     public Square[] getCurrentBoard() {
-        return current;
+        return squares;
     }
     public int getCurrentSquare() {
         return playing.getPos();
@@ -38,9 +37,13 @@ public class Board1D implements Board {
     public Square getCandidate() {
         return (last == -1) ? new Square() : current[last];
     }
+    public Board bet (int idx) {
+        Square curr = current[last];
+        curr.setBet(curr.getOptions()[idx]);
+        return this;
+    }
     public Board1D init() {
         System.arraycopy(squares, 0, current, 0, squares.length);
-        calculateOptions();
         Arrays.sort(current);
         last = current.length - 1;
         while (last >= 0 && current[last].cardinality() == 0) last--;
@@ -66,6 +69,38 @@ public class Board1D implements Board {
         }
         while (last >= 0 && current[last].cardinality() == 0) last--;
     }
-    private void calculateOptions() {
+    public Board copy() {
+        Board board = null;
+        try {
+            board = (Board) this.clone();
+        } catch (CloneNotSupportedException e) {
+           System.err.println("error en el clone");
+        }
+        return board;
     }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        Board1D board = (Board1D) super.clone();
+        // Clonamos los escaques
+        Square[] cloning = new Square[CFG.CARD];
+        for (int i = 0; i < squares.length; i++) cloning[i] = (Square) squares[i].clone();
+        board.setSquares(cloning);
+
+        // Ahora la posicion actual del tablero
+        Square[] curr = new Square[CFG.CARD];
+        for (int i = 0; i < current.length; i++) {
+            curr[i] = cloning[current[i].getPos()];
+        }
+        board.setCurrent(cloning);
+        return board;
+    }
+
+    private void setSquares (Square[] squares) {
+        this.squares = squares;
+    }
+    private void setCurrent (Square[] squares) {
+        this.current = squares;
+    }
+
 }

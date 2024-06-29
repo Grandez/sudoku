@@ -4,7 +4,7 @@ import com.sdp.sudoku.config.CFG;
 
 import java.util.*;
 
-public class Square implements Comparable<Square> {
+public class Square implements Comparable<Square>, Cloneable {
     static Set<Integer> domain = new HashSet<Integer>(Arrays.asList(1,2,3,4,5,6,7,8,9));
     static Integer[] wrk = new Integer[CFG.CARD];
 
@@ -27,7 +27,7 @@ public class Square implements Comparable<Square> {
         return this;
     }
     public Square setValue (int value) {
-        this.value = options.toArray(wrk)[value];
+        this.value = options.toArray(wrk)[0];
         this.type = 0; // Playing
         return this;
     }
@@ -37,6 +37,14 @@ public class Square implements Comparable<Square> {
     }
     public Square setUsed (Integer value) {
         options.remove(value);
+        return this;
+    }
+    public Integer[] getOptions() {
+        return options.toArray(new Integer[options.size()]);
+    }
+    public Square setBet(Integer value) {
+        options.clear();
+        options.add(value);
         return this;
     }
     public int getType() {
@@ -65,5 +73,8 @@ public class Square implements Comparable<Square> {
     @Override
     public int compareTo(Square o) {
         return o.cardinality() - this.cardinality(); // Ordena al reves
+    }
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }

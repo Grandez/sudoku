@@ -11,4 +11,4 @@ plugins {
 }
 
 rootProject.name = 'sudoku'
-include('app')
+include('sudoku')

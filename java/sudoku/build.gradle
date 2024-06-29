@@ -32,7 +32,7 @@ java {
 
 application {
     // Define the main class for the application.
-    mainClass = 'com.sdp.sudoku.App'
+    mainClass = 'com.sdp.sudoku.Main'
 }
 
 tasks.named('test') {

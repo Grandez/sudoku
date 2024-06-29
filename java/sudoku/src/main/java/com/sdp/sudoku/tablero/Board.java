@@ -1,10 +1,10 @@
 package com.sdp.sudoku.tablero;
 
 public interface Board {
-    public Board init();
-    public Board bet(int option);
-    public Square[] getCurrentBoard();
-    public Square getCandidate();
-    public void round(Square square);
-    public Board copy();
+    Board init();
+    Board bet(int option);
+    Square[] getCurrentBoard();
+    Square getCandidate();
+    void round(Square square);
+     Board copy();
 }

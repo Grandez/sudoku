@@ -10,9 +10,6 @@ public class Board1D implements Board, Cloneable {
     Square playing;
     int last;
 
-    private Board1D() {
-    }
-
     public Board1D(Integer[] data) {
         int i;
         for (i = 0; i < squares.length; i++) squares[i] = new Square(i);
@@ -23,16 +20,11 @@ public class Board1D implements Board, Cloneable {
     public void round (Square square) {
         if (playing != null) playing.setPlayed();
         this.playing = square;
-        for (int i = 0; i < squares.length; i++) {
-            squares[i].setUsed(square.getValue());
-        }
+        for (Square sq : squares) sq.setUsed(square.getValue());
         recalculateBoard();
     }
     public Square[] getCurrentBoard() {
         return squares;
-    }
-    public int getCurrentSquare() {
-        return playing.getPos();
     }
     public Square getCandidate() {
         return (last == -1) ? new Square() : current[last];
@@ -52,9 +44,8 @@ public class Board1D implements Board, Cloneable {
 
     private void setConstraint(int pos, int value) {
         // Aqui la funcion es la identidad
-        int idx = pos;
         for (int i = 0; i < squares.length; i++) {
-            if (i == idx) squares[i].setConstraint(value);
+            if (i == pos) squares[i].setConstraint(value);
             squares[i].setUsed(value);
         }
     }
@@ -92,7 +83,7 @@ public class Board1D implements Board, Cloneable {
         for (int i = 0; i < current.length; i++) {
             curr[i] = cloning[current[i].getPos()];
         }
-        board.setCurrent(cloning);
+        board.setCurrent(curr);
         return board;
     }
 

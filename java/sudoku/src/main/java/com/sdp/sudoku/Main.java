@@ -43,7 +43,7 @@ public class Main {
                         pBoard = board.copy();
                         board.bet(i);
                         // Ponemos el valor como unica opcion
-                        rc = play(pBoard);
+                        play(pBoard);
                     }
             }
         }

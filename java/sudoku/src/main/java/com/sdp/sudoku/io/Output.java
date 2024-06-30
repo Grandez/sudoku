@@ -13,7 +13,7 @@ public class Output {
 
     public static Output instance;
     private static int calls = 0;
-
+/*
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_BLACK = "\u001B[30m";
 
@@ -23,7 +23,7 @@ public class Output {
     public static final String ANSI_PURPLE = "\u001B[35m";
     public static final String ANSI_CYAN = "\u001B[36m";
     public static final String ANSI_WHITE = "\u001B[37m";
-
+*/
     static final String BOLD    = "\u001b[1m";
     static final String BLACK   = "\u001B[30m";
     static final String BLUE    = "\u001B[34m";

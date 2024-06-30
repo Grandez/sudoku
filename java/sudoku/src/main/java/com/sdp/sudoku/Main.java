@@ -61,12 +61,11 @@ public class Main {
         out.print(board.getCurrentBoard());
         return board;
     }
-    private Board roundSimple(Board board, Square option) {
-        option.setValue(0);
+    private void roundSimple(Board board, Square option) {
+        option.setValue();
         board.round(option);
         out.setMessage("Jugando casilla " + option.getPos());
         out.setMessage("Jugando valor " + option.getValue());
         out.print(board.getCurrentBoard());
-        return board;
     }
 }

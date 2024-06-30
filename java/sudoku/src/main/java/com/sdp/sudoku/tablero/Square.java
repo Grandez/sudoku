@@ -5,7 +5,7 @@ import com.sdp.sudoku.config.CFG;
 import java.util.*;
 
 public class Square implements Comparable<Square>, Cloneable {
-    static Set<Integer> domain = new HashSet<Integer>(Arrays.asList(1,2,3,4,5,6,7,8,9));
+    static Set<Integer> domain = new HashSet<>(Arrays.asList(1,2,3,4,5,6,7,8,9));
     static Integer[] wrk = new Integer[CFG.CARD];
 
     int pos  = 0;  // Posicion en el tablero
@@ -26,7 +26,7 @@ public class Square implements Comparable<Square>, Cloneable {
         this.options.clear();
         return this;
     }
-    public Square setValue (int value) {
+    public Square setValue () {
         this.value = options.toArray(wrk)[0];
         this.type = 0; // Playing
         return this;

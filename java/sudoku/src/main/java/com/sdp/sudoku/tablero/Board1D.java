@@ -11,9 +11,8 @@ public class Board1D implements Board, Cloneable {
     int last;
 
     public Board1D(Integer[] data) {
-        int i;
-        for (i = 0; i < squares.length; i++) squares[i] = new Square(i);
-        for (i = 0; i < data.length; i++) {
+        for (int i = 0; i < squares.length; i++) squares[i] = new Square(i);
+        for (int i = 0; i < data.length; i++) {
             if (data[i] != 0) setConstraint(i, data[i]);
         }
     }
@@ -41,7 +40,6 @@ public class Board1D implements Board, Cloneable {
         while (last >= 0 && current[last].cardinality() == 0) last--;
         return this;
     }
-
     private void setConstraint(int pos, int value) {
         // Aqui la funcion es la identidad
         for (int i = 0; i < squares.length; i++) {
@@ -93,5 +91,4 @@ public class Board1D implements Board, Cloneable {
     private void setCurrent (Square[] squares) {
         this.current = squares;
     }
-
 }

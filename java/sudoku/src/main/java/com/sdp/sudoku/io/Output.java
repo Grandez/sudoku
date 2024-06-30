@@ -101,6 +101,7 @@ public class Output {
             printer.println(BARRA);
         }
         for (int i = c; i < linesR.length; i++) {
+            printer.print("                   ");
             printer.print(BARRA);
             printer.println(linesR[i]);
         }

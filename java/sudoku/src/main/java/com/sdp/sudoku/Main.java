@@ -14,6 +14,7 @@ public class Main {
         Main app = new Main();
         int rc = app.playGame(args);
         if (rc == CDG.DONE) System.out.println("Hecho!");
+        if (rc == CDG.FAIL) System.out.println("FALLO!");
         System.exit(rc);
     }
     private int playGame(String[] args) {
@@ -25,12 +26,13 @@ public class Main {
 
     private int play (Board board) {
         Board pBoard;
-
-        while (true) {
+        int rc = CDG.NEXT;
+        while (rc == CDG.NEXT) {
             Square option = board.getCandidate();
             int card = option.cardinality();
+
             switch (card) {
-                case 0: return CDG.DONE;
+                case 0: rc = CDG.DONE; break;
                 case 1:
                     out.setMessage("Obtenida opcion de cardinalidad 1");
                     out.setMessage("Casilla: " + option.getPos());
@@ -38,16 +40,17 @@ public class Main {
                 default:
                     out.setMessage("Obtenida opcion de cardinalidad: " +  card);
                     out.setMessage("Casilla: " + option.getPos());
-
-                    for (int i = 0; i < option.cardinality(); i++) {
+                    int i;
+                    for (i = 0; i < card; i++) {
                         pBoard = board.copy();
                         board.bet(i);
                         // Ponemos el valor como unica opcion
-                        play(pBoard);
+                        if (play(pBoard) == CDG.DONE) break;
                     }
+                    rc = (i == card) ? CDG.FAIL : CDG.DONE;
             }
         }
-        return CDG.DONE;
+        return rc;
     }
     private Board prepareBoard(Integer[] data) {
         BoardFactory factory = new BoardFactory();

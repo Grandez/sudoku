@@ -1,4 +1,4 @@
-package com.sdp.sudoku.tablero;
+package com.sdp.sudoku.boards;
 
 import com.sdp.sudoku.config.CFG;
 
@@ -18,7 +18,8 @@ public class Square implements Comparable<Square>, Cloneable {
     }
     public Square (int pos) {
         this.pos = pos;
-        this.options = new HashSet<>(CFG.OPTIONS);
+        this.options = new HashSet<Integer>();
+        for (int i = 1; i < CFG.DOMAIN.length; i++) this.options.add(i);
     }
     public Square setConstraint (Integer value) {
         this.value = value;
@@ -49,9 +50,6 @@ public class Square implements Comparable<Square>, Cloneable {
     }
     public int getType() {
         return type;
-    }
-    public void setType(int type) {
-        this.type = type;
     }
     public int getValue() {
         return value;

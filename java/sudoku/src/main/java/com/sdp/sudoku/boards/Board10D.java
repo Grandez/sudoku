@@ -1,16 +1,16 @@
-package com.sdp.sudoku.tablero;
+package com.sdp.sudoku.boards;
 
 import com.sdp.sudoku.config.CFG;
 
 import java.util.Arrays;
 
-public class Board1D implements Board, Cloneable {
+public class Board10D implements Board, Cloneable {
     Square[] squares = new Square[CFG.CARD];
     Square[] current = new Square[CFG.CARD];
     Square playing;
     int last;
 
-    public Board1D(Integer[] data) {
+    public Board10D(Integer[] data) {
         for (int i = 0; i < squares.length; i++) squares[i] = new Square(i);
         for (int i = 0; i < data.length; i++) {
             if (data[i] != 0) setConstraint(i, data[i]);
@@ -33,7 +33,7 @@ public class Board1D implements Board, Cloneable {
         curr.setBet(curr.getOptions()[idx]);
         return this;
     }
-    public Board1D init() {
+    public Board10D init() {
         System.arraycopy(squares, 0, current, 0, squares.length);
         Arrays.sort(current);
         last = current.length - 1;
@@ -70,7 +70,7 @@ public class Board1D implements Board, Cloneable {
 
     @Override
     protected Object clone() throws CloneNotSupportedException {
-        Board1D board = (Board1D) super.clone();
+        Board10D board = (Board10D) super.clone();
         // Clonamos los escaques
         Square[] cloning = new Square[CFG.CARD];
         for (int i = 0; i < squares.length; i++) cloning[i] = (Square) squares[i].clone();

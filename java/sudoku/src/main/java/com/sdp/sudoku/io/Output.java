@@ -1,6 +1,8 @@
 package com.sdp.sudoku.io;
 
-import com.sdp.sudoku.tablero.Square;
+import com.sdp.sudoku.config.CFG;
+import com.sdp.sudoku.config.BOX;
+import com.sdp.sudoku.boards.Square;
 
 import java.io.PrintWriter;
 import java.util.*;
@@ -33,45 +35,16 @@ public class Output {
     static final String PLAYED  = BOLD + BLUE;
     static final String PLAYING = BOLD + RED;
 
-    static final char BARRA   = '\u2502';
-    static final char LEFT_UP = '\u2514';
-    static final char LEFT_DOWN = '\u250C';
-    static final char RIGHT_UP = '\u2518';
-    static final char RIGHT_DOWN = '\u2510';
-    static final char HORZ = '\u2500';
-    static final char VERT = '\u2502';
-    static final char CROSS = '\u253C';
-    static final char CROSS_DOWN = '\u252C';
-    static final char CROSS_UP = '\u2534';
-
-    static Character[][] box = {
-          {LEFT_DOWN, CROSS_DOWN, RIGHT_DOWN}
-         ,{LEFT_DOWN, CROSS, RIGHT_DOWN}
-         ,{LEFT_UP,   CROSS_UP, RIGHT_UP}
-    };
-    Integer[] left;
-    List<StringBuffer> right = new ArrayList<StringBuffer>();
+    List<StringBuffer> right = new ArrayList<>();
     Square[] board;
-    PrintWriter printer = new PrintWriter(System.out,true);
+    PPrinter printer = new PPrinter();
 
     public static Output getInstance() {
        if (instance == null) instance = new Output();
        return instance;
     }
     public Output init() {
-        right = new ArrayList<StringBuffer>();
-        return this;
-    }
-    public Output setBoard(Square[] board) {
-        this.board = board;
-        return this;
-    }
-    public Output setAction(String txt) {
-        right.add(new StringBuffer(txt));
-        return this;
-    }
-    public Output setAction(StringBuffer txt) {
-        right.add(txt);
+        right = new ArrayList<>();
         return this;
     }
     public Output setMessage(String txt) {
@@ -91,25 +64,19 @@ public class Output {
         String[] linesL = makeLeftArray(board);
         int c = min(linesR.length,linesL.length);
         for (int i = 0; i < c; i++) {
-            printer.print(linesL[i]);
-            printer.print(BARRA);
-            printer.print(linesR[i]);
-            printer.println(" ");
+            printer.pprint(linesL[i]).pprint(BOX.VERT).pprint(linesR[i]).println(" ");
         }
         for (int i = c; i < linesL.length; i++) {
-            printer.print(linesL[i]);
-            printer.println(BARRA);
+            printer.pprint(linesL[i]).println(BOX.VERT);
         }
         for (int i = c; i < linesR.length; i++) {
-            printer.print("                   ");
-            printer.print(BARRA);
-            printer.println(linesR[i]);
+            printer.pprint("                   ").pprint(BOX.VERT).println(linesR[i]);
         }
         init();
     }
 
     String[] makeRightArray(List<StringBuffer> right) {
-        List<String> lines = new ArrayList<String>();
+        List<String> lines = new ArrayList<>();
         for (StringBuffer line : right) {
             String[] toks = line.toString().split("\n");
             for (int i = 0; i < toks.length; i++) {
@@ -125,41 +92,43 @@ public class Output {
         return lines.toArray(new String[lines.size()]);
     }
     String[] makeLeftArray(Square[] board) {
-        List<String> lines = new ArrayList<String>();
+        List<String> lines = new ArrayList<>();
         lines.add(lineSeparator(0));
-        StringBuilder line = new StringBuilder();
-        line.append(BARRA);
-        for (int i = 0; i < board.length; i++) {
-            line.append(board[i].getValue() == 0 ? ' ' :  getSquareAsAnsi(board[i]));
-            line.append(BARRA);
-            if (i > 0 && i % 9 == 0) {
-                lines.add(line.toString());
-                lines.add(lineSeparator(1));
-            }
-        }
-        lines.add(line.toString());
-        lines.add(lineSeparator(2));
 
+        int i = 0;
+        int j = CFG.CARD;
+        do {
+            StringBuilder line = new StringBuilder();
+            line.append(BOX.VERT);
+            for (; i < j; i++) {
+                line.append(board[i].getValue() == 0 ? ' ' :  getSquareAsAnsi(board[i]));
+                line.append(BOX.VERT);
+            }
+            lines.add(line.toString());
+            j += CFG.CARD;
+            if (i + 1 < board.length) lines.add(lineSeparator(1));
+        } while (i < board.length);
+        lines.add(lineSeparator(2));
         lines.add("                   ");
 
         return lines.toArray(new String[lines.size()]);
     }
     String lineSeparator(int where) {
         StringBuffer buff = new StringBuffer();
-        Character[] car = box[where];
+        Character[] car = BOX.box[where];
         buff.append(car[0]);
-        for (int i = 0; i < 8; i++) buff.append(HORZ).append(car[1]);
-        buff.append(HORZ).append(car[2]);
+        for (int i = 0; i < 8; i++) buff.append(BOX.HORZ).append(car[1]);
+        buff.append(BOX.HORZ).append(car[2]);
         return buff.toString();
     }
 
     StringBuilder getSquareAsAnsi (Square square) {
-        StringBuilder str = new StringBuilder(12);
+        StringBuilder str;
         switch (square.getType()) {
             case -1: str = new StringBuilder(DEFINED); break;
             case  1: str = new StringBuilder(PLAYED); break;
             default: str = new StringBuilder(PLAYING); break;
         }
-        return str.append(square.getValue()).append(RESET);
+        return str.append(CFG.getSymbol(square.getValue())).append(RESET);
     }
 }

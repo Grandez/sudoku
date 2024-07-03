@@ -5,27 +5,34 @@ package com.sdp.sudoku;
 
 import com.sdp.sudoku.config.CDG;
 import com.sdp.sudoku.io.*;
-import com.sdp.sudoku.tablero.*;
+import com.sdp.sudoku.boards.*;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class Main {
     Output out = Output.getInstance();
-
+    long start = 0;
+    long tree = 0;
     public static void main(String[] args) {
         Main app = new Main();
         int rc = app.playGame(args);
-        if (rc == CDG.DONE) System.out.println("Hecho!");
-        if (rc == CDG.FAIL) System.out.println("FALLO!");
         System.exit(rc);
     }
     private int playGame(String[] args) {
         Input input = new Input();
         Integer[] data = input.load(args);
         Board board = prepareBoard(data);
-        return play(board);
+        start = System.currentTimeMillis();
+        int rc =  play(board);
+        if (rc == CDG.DONE) System.out.println("Hecho! " + (System.currentTimeMillis() - start));
+        if (rc == CDG.FAIL) System.out.println("FALLO!");
+        return rc;
     }
 
     private int play (Board board) {
         Board pBoard;
+        tree++;
         int rc = CDG.NEXT;
         while (rc == CDG.NEXT) {
             Square option = board.getCandidate();

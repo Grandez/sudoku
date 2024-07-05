@@ -3,76 +3,48 @@
  */
 package com.sdp.sudoku;
 
-import com.sdp.sudoku.config.CDG;
+import com.sdp.sudoku.ctes.ANSI;
+import com.sdp.sudoku.ctes.CDG;
 import com.sdp.sudoku.io.*;
 import com.sdp.sudoku.boards.*;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.io.PrintWriter;
 
 public class Main {
     Output out = Output.getInstance();
     long start = 0;
-    long tree = 0;
+
+    StringBuilder stree = new StringBuilder("1 ");
+
     public static void main(String[] args) {
-        Main app = new Main();
-        int rc = app.playGame(args);
+        Sudoku sudoku = new Sudoku();
+
+        Integer[] data = processCommandLine(args);
+
+        long start = System.currentTimeMillis();
+        int rc = sudoku.playGame(data);
+
+        printResult(sudoku.getBoard());
+        printSummary(rc, start);
+
         System.exit(rc);
     }
-    private int playGame(String[] args) {
+    private static Integer[]  processCommandLine(String[] args) {
         Input input = new Input();
-        Integer[] data = input.load(args);
-        Board board = prepareBoard(data);
-        start = System.currentTimeMillis();
-        int rc =  play(board);
-        if (rc == CDG.DONE) System.out.println("Hecho! " + (System.currentTimeMillis() - start));
-        if (rc == CDG.FAIL) System.out.println("FALLO!");
-        return rc;
+        return input.load(args);
+    }
+    private static void printResult(Board board) {
     }
 
-    private int play (Board board) {
-        Board pBoard;
-        tree++;
-        int rc = CDG.NEXT;
-        while (rc == CDG.NEXT) {
-            Square option = board.getCandidate();
-            int card = option.cardinality();
+    private static void printSummary(int rc, long start) {
+        PrintWriter printer = new PrintWriter(System.out);
+        printer.print("Resultado: ");
+        printer.println((rc == CDG.DONE) ? ANSI.use(ANSI.BOLD,"Resuelto")
+                                         : ANSI.use(ANSI.RED, "Erroneo"));
+        printer.print("Tiempo:    ");
+        printer.println(ANSI.use(ANSI.BOLD, Long.toString(System.currentTimeMillis() - start) + " ms"));
+    }
 
-            switch (card) {
-                case 0: rc = CDG.DONE; break;
-                case 1:
-                    out.setMessage("Obtenida opcion de cardinalidad 1");
-                    out.setMessage("Casilla: " + option.getPos());
-                    roundSimple(board, option); break;
-                default:
-                    out.setMessage("Obtenida opcion de cardinalidad: " +  card);
-                    out.setMessage("Casilla: " + option.getPos());
-                    int i;
-                    for (i = 0; i < card; i++) {
-                        pBoard = board.copy();
-                        board.bet(i);
-                        // Ponemos el valor como unica opcion
-                        if (play(pBoard) == CDG.DONE) break;
-                    }
-                    rc = (i == card) ? CDG.FAIL : CDG.DONE;
-            }
-        }
-        return rc;
-    }
-    private Board prepareBoard(Integer[] data) {
-        BoardFactory factory = new BoardFactory();
-
-        Board board = factory.getBoard(data);
-        board.init();
-        out.setMessage("Situacion inicial");
-        out.print(board.getCurrentBoard());
-        return board;
-    }
-    private void roundSimple(Board board, Square option) {
-        option.setValue();
-        board.round(option);
-        out.setMessage("Jugando casilla " + option.getPos());
-        out.setMessage("Jugando valor " + option.getValue());
-        out.print(board.getCurrentBoard());
-    }
 }

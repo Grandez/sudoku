@@ -4,13 +4,12 @@ import com.sdp.sudoku.config.CFG;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class Input {
     public Integer[] load (String[] args) {
+        /*
         Integer[] data100 = {1,2,3,4,5,6,7,8,9};
         Integer[] data101 = {0,2,3,4,5,6,7,8,9};
         Integer[] data102 = {8,0,3,4,5,6,7,9,1};
@@ -37,7 +36,7 @@ public class Input {
                 ,3,4,5,6,7,8,9,1,2
                 ,2,3,4,5,6,7,8,9,1
                 ,2,3,4,5,6,7,8,9,1};
-
+*/
         byte[] bytes = null;
         switch (args.length) {
             case 0: bytes = readFromConsole();     break;
@@ -47,13 +46,7 @@ public class Input {
         }
         return parseData(bytes);
     }
-    private byte[] selectFile() {
-        System.out.print("Fichero de prueba: ");
-        Scanner scanner = new Scanner(System.in);
-        return readFromFile(scanner.nextLine());
-    }
     private byte[] readFromFile(String fileIn) {
-
         try {
             return Files.readAllBytes(Paths.get(fileIn));
         } catch (IOException e) {
@@ -90,18 +83,12 @@ public class Input {
         byte[] domain = new byte[256];
         for (int i = 0; i < CFG.DOMAIN.length; i++) domain[CFG.DOMAIN[i]] = (byte) CFG.DOMAIN[i];
         for (int i = 0; i < bytes.length; i++) if (domain[bytes[i]] != 0x0) buff.append((char) bytes[i]);
-        /*
-        for (int i = 0; i < bytes.length; i++) {
-            if (domain[bytes[i]] == 0x0) error(16, "Caracter invalido; " + bytes[i])
-            buff.append((char) bytes[i]);
-        }
-        */
+
         String str = buff.toString();
         Integer[] data = new Integer[str.length()];
         for (int i = 0; i < str.length(); i++) data[i] = getIndex(str.charAt(i));
         return data;
     }
-
     private int getIndex (char c) {
         for (int i = 0; i < CFG.DOMAIN.length; i++) if (CFG.DOMAIN[i] == c) return i;
         return 0;
@@ -110,5 +97,9 @@ public class Input {
         System.err.println(txt);
         System.exit(rc);
     }
+    private byte[] selectFile() {
+        System.out.print("Fichero de prueba: ");
+        Scanner scanner = new Scanner(System.in);
+        return readFromFile(scanner.nextLine());
+    }
 }
-

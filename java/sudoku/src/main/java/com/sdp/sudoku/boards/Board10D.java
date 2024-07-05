@@ -4,30 +4,49 @@ import com.sdp.sudoku.config.CFG;
 
 import java.util.Arrays;
 
-public class Board10D implements Board, Cloneable {
-    Square[] squares = new Square[CFG.CARD];
-    Square[] current = new Square[CFG.CARD];
-    Square playing;
-    int last;
-
+public class Board10D extends BoardBase implements Board {
     public Board10D(Integer[] data) {
+        squares = new Square[CFG.CARD];
+        current = new Square[CFG.CARD];
+
         for (int i = 0; i < squares.length; i++) squares[i] = new Square(i);
         for (int i = 0; i < data.length; i++) {
             if (data[i] != 0) setConstraint(i, data[i]);
         }
     }
+    // Contructor de copia
+    public Board10D(Board10D board) {
+        Square[] old = board.getBoard();
+        for (int i = 0; i < squares.length; i++) squares[i] = new Square(old[i]);
+        init();
+    }
+    public Board copy() {
+        return new Board10D(this);
+    }
+
+
+    /*
     public void round (Square square) {
         if (playing != null) playing.setPlayed();
         this.playing = square;
         for (Square sq : squares) sq.setUsed(square.getValue());
-        recalculateBoard();
+        recalculate();
     }
-    public Square[] getCurrentBoard() {
-        return squares;
+
+     */
+    public Board recalculate () {
+        Square tmp;
+        for (int i = 0; i < last; i++) {
+            if (current[i].cardinality() <= current[i+1].cardinality()) {
+                tmp = current[i];
+                current[i] = current[i+1];
+                current[i+1] = tmp;
+            }
+        }
+        while (last >= 0 && current[last].cardinality() == 0) last--;
+        return this;
     }
-    public Square getCandidate() {
-        return (last == -1) ? new Square() : current[last];
-    }
+
     public Board bet (int idx) {
         Square curr = current[last];
         curr.setBet(curr.getOptions()[idx]);
@@ -40,51 +59,9 @@ public class Board10D implements Board, Cloneable {
         while (last >= 0 && current[last].cardinality() == 0) last--;
         return this;
     }
-    private void setConstraint(int pos, int value) {
-        // Aqui la funcion es la identidad
-        for (int i = 0; i < squares.length; i++) {
-            if (i == pos) squares[i].setConstraint(value);
-            squares[i].setUsed(value);
-        }
-    }
-    private void recalculateBoard () {
-        Square tmp;
-        for (int i = 0; i < last; i++) {
-            if (current[i].cardinality() <= current[i+1].cardinality()) {
-                tmp = current[i];
-                current[i] = current[i+1];
-                current[i+1] = tmp;
-            }
-        }
-        while (last >= 0 && current[last].cardinality() == 0) last--;
-    }
-    public Board copy() {
-        Board board = null;
-        try {
-            board = (Board) this.clone();
-        } catch (CloneNotSupportedException e) {
-           System.err.println("error en el clone");
-        }
-        return board;
-    }
+    protected void markAsUsed (int pos, int value) {
 
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
-        Board10D board = (Board10D) super.clone();
-        // Clonamos los escaques
-        Square[] cloning = new Square[CFG.CARD];
-        for (int i = 0; i < squares.length; i++) cloning[i] = (Square) squares[i].clone();
-        board.setSquares(cloning);
-
-        // Ahora la posicion actual del tablero
-        Square[] curr = new Square[CFG.CARD];
-        for (int i = 0; i < current.length; i++) {
-            curr[i] = cloning[current[i].getPos()];
-        }
-        board.setCurrent(curr);
-        return board;
     }
-
     private void setSquares (Square[] squares) {
         this.squares = squares;
     }

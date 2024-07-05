@@ -6,28 +6,46 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Board25D implements Board, Cloneable {
-    Square[] squares = new Square[CFG.CARD * CFG.CARD];
-    Square[] current = new Square[CFG.CARD * CFG.CARD];
-    Square playing;
-    int last;
-
+public class Board25D extends  BoardBase implements Board {
     public Board25D(Integer[] data) {
-        for (int i = 0; i < CFG.CARD * CFG.CARD; i++) squares[i] = new Square(i);
-        for (int i = 0; i < data.length; i++)         if (data[i] != 0) setConstraint(i, data[i]);
+        squares = new Square[CFG.CARD * CFG.CARD];
+        current = new Square[CFG.CARD * CFG.CARD];
 
+        for (int i = 0; i < CFG.CARD * CFG.CARD; i++) squares[i] = new Square(i);
+        for (int i = 0; i < data.length; i++)       {
+            if (i == 30)
+                System.out.println("Indice " + i);
+            if (data[i] != 0) setConstraint(i, data[i]);
+        }
     }
-    public void round (Square square) {
-        if (playing != null) playing.setPlayed();
-        this.playing = square;
-        markAsUsed(square.getPos(), square.getValue());
-        recalculateBoard();
+    // Contructor de copia
+    public Board25D(Board25D board) {
+        Square[] old = board.getBoard();
+        for (int i = 0; i < squares.length; i++) squares[i] = new Square(old[i]);
+        init();
     }
-    public Square[] getCurrentBoard() {
-        return squares;
+
+    public Board copy() {
+        return new Board25D(this);
     }
-    public Square getCandidate() {
-        return (last == -1) ? new Square() : current[last];
+    public Board recalculate () {
+        setSquaresAsPlayed();
+        current = Arrays.copyOfRange(current,0,last);
+        Arrays.sort(current);
+        while (last >= 0 && current[last].cardinality() == 0) last--;
+/*
+        Square tmp;
+        for (int i = 0; i < last; i++) {
+            if (current[i].cardinality() <= current[i+1].cardinality()) {
+                tmp = current[i];
+                current[i] = current[i+1];
+                current[i+1] = tmp;
+            }
+        }
+        while (last >= 0 && current[last].cardinality() == 0) last--;
+
+ */
+        return this;
     }
     public Board bet (int idx) {
         Square curr = current[last];
@@ -41,57 +59,9 @@ public class Board25D implements Board, Cloneable {
         while (last >= 0 && current[last].cardinality() == 0) last--;
         return this;
     }
-
-    // ////////////////////////////////////////////////////////
-    // Deep clone
-    // ////////////////////////////////////////////////////////
-
-    public Board copy() {
-        Board board = null;
-        try {
-            board = (Board) this.clone();
-        } catch (CloneNotSupportedException e) {
-            System.err.println("error en el clone");
-        }
-        return board;
-    }
-
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
-        Board25D board = (Board25D) super.clone();
-        // Clonamos los escaques
-        Square[] cloning = new Square[CFG.CARD];
-        for (int i = 0; i < squares.length; i++) cloning[i] = (Square) squares[i].clone();
-        board.setSquares(cloning);
-
-        // Ahora la posicion actual del tablero
-        Square[] curr = new Square[CFG.CARD];
-        for (int i = 0; i < current.length; i++) {
-            curr[i] = cloning[current[i].getPos()];
-        }
-        board.setCurrent(curr);
-        return board;
-    }
-
     // ////////////////////////////////////////////////////////
     // Private code
     // ////////////////////////////////////////////////////////
-
-    private void setConstraint(int pos, int value) {
-        markAsUsed(pos, value);
-        squares[pos].setConstraint(value);
-    }
-    private void recalculateBoard () {
-        Square tmp;
-        for (int i = 0; i < last; i++) {
-            if (current[i].cardinality() <= current[i+1].cardinality()) {
-                tmp = current[i];
-                current[i] = current[i+1];
-                current[i+1] = tmp;
-            }
-        }
-        while (last >= 0 && current[last].cardinality() == 0) last--;
-    }
 
     private void setSquares (Square[] squares) {
         this.squares = squares;
@@ -105,7 +75,7 @@ public class Board25D implements Board, Cloneable {
         dims[1] = pos % CFG.CARD;
         return dims;
     }
-    private void markAsUsed (int pos, int value) {
+    protected void markAsUsed (int pos, int value) {
         int[] axis = getDimensions(pos); // fila, columna
         // Eje x
         int x = axis[0] * CFG.CARD;

@@ -1,4 +1,4 @@
-package com.sdp.sudoku.config;
+package com.sdp.sudoku.ctes;
 
 public class BOX {
     static final char LEFT_UP      = '\u2514';

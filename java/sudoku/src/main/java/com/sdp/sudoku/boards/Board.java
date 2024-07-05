@@ -1,10 +1,11 @@
 package com.sdp.sudoku.boards;
 
+import java.util.List;
+
 public interface Board {
-    Board    init();
-    Board    bet(int option);
-    Square[] getCurrentBoard();
-    Square   getCandidate();
-    void     round(Square square);
-    Board    copy();
+    Square[]     getBoard();
+    List<Square> getCandidates();
+    int          round(Square square);
+    Board        bet(int option);
+    Board        copy();
 }

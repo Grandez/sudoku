@@ -1,4 +1,4 @@
-package com.sdp.sudoku.config;
+package com.sdp.sudoku.ctes;
 
 public class CDG {
     public static int DONE = 0;

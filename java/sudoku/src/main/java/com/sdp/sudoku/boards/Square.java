@@ -7,17 +7,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Square implements Comparable<Square> {
-//    static Set<Character> domain = new HashSet<Character>(Arrays.<Character>asList(Arrays.copyOfRange(CFG.DOMAIN, 1, CFG.CARD + 1)));
 
-    public enum TYPE { FREE, CONSTRAINT, PLAYING, PLAYED}
-    int pos  = 0;  // Posicion en el tablero
-    TYPE type = TYPE.FREE; // Fijo: -1, Calculado: 1
-    int value = 0; // Valor actual
+    public enum    TYPE { FREE, CONSTRAINT, PLAYING, PLAYED}
+    TYPE   type  = TYPE.FREE;
+    int    pos   = 0;  // Posicion en el tablero
+    int    value = 0; // Valor actual
 
     Set<Integer> options = new HashSet<>();
-    public Square() {
 
-    }
     public Square (int pos) {
         this.pos = pos;
         this.options = new HashSet<Integer>();
@@ -25,14 +22,14 @@ public class Square implements Comparable<Square> {
     }
     // Constructor de copia
     public Square(Square square) {
-        this.pos = square.getPos();
-        this.type = square.getType();
+        this.pos   = square.getPos();
+        this.type  = square.getType();
         this.value = square.getValue();
         Collections.addAll(this.options, square.getOptions());
     }
     public Square setConstraint (Integer value) {
         this.value = value;
-        this.type = TYPE.CONSTRAINT; // Constraint
+        this.type  = TYPE.CONSTRAINT; // Constraint
         this.options.clear();
         return this;
     }
@@ -65,54 +62,14 @@ public class Square implements Comparable<Square> {
     public void setType(TYPE type) {
         this.type = type;
     }
-
     public int getValue() {
         return value;
     }
     public int getPos() {
         return pos;
     }
-    /*
-    public Square setValue(int value) {
-        this.value = value;
-        options.remove(value);
-        return this;
-    }
-    */
-
-    public int getNumberOfOptions () {
-        int size = options.size();
-        if (size == 0) {
-            if (value == 0) {
-                return -1;
-            } else {
-                return size;
-            }
-        }
-        return size;
-    }
-    public int cardinality () {
-        int size = options.size();
-        if (size == 0) {
-            if (value == 0) {
-                return -1;
-            } else {
-                return size;
-            }
-        }
-        return size;
-    }
-    public int cardinal2() {
+    public int cardinal() {
         return options.size();
-    }
-    public int cardinal () {
-        int size = options.size();
-        return (size == 0 && value == 0) ? -1 : size;
-    }
-
-    @Override
-    public int compareTo(Square o) {
-        return o.cardinal() - this.cardinal(); // Ordena al reves
     }
     public boolean isPlaying() {
         return  type == TYPE.PLAYING;
@@ -120,4 +77,10 @@ public class Square implements Comparable<Square> {
     public void markAsPlayed() {
         type = TYPE.PLAYED;
     }
+
+    @Override
+    public int compareTo(Square o) {
+        return o.cardinal() - this.cardinal(); // Ordena al reves
+    }
+
 }

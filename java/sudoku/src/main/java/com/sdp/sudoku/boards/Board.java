@@ -5,7 +5,10 @@ import java.util.List;
 public interface Board {
     Square[]     getBoard();
     List<Square> getCandidates();
-    int          round(Square square);
     Board        bet(int option);
-    Board        copy();
+    Board        copy(boolean nextTree);
+    int          round(List<Square> options);
+    int          getTree();
+    int          getMaxTree();
+
 }

@@ -5,30 +5,28 @@ import com.sdp.sudoku.config.CFG;
 import java.util.Arrays;
 
 public class Board20D extends BoardBase implements Board {
+    // Constructor con datos
     public Board20D(Integer[] data) {
         squares = new Square[CFG.CARD * CFG.CARD];
-        current = new Square[CFG.CARD * CFG.CARD];
-
-        int size = CFG.CARD * CFG.CARD;
-        for (int i = 0; i < size; i++) squares[i] = new Square(i);
-
-        for (int i = 0; i < size; i++)  {
-            if (data[i] != 0) setConstraint(i, data[i]);
-        }
-
+        initBoard(data);
     }
     // Contructor de copia
-    public Board20D(Board20D board) {
+    public Board20D(Board20D board, boolean nextTree) {
         squares = new Square[CFG.CARD * CFG.CARD];
-        current = new Square[CFG.CARD * CFG.CARD];
 
+        this.tree = board.getTree();
+        if (nextTree)  {
+            this.tree++;
+            if (this.maxTree < this.tree) this.maxTree = this.tree;
+        }
         Square[] old = board.getBoard();
         for (int i = 0; i < squares.length; i++) squares[i] = new Square(old[i]);
-        init();
+        initCurrent();
     }
-    public Board copy() {
-        return new Board20D(this);
+    public Board copy(boolean nextTree) {
+        return new Board20D(this, nextTree);
     }
+    /*
     private Board20D init() {
         System.arraycopy(squares, 0, current, 0, squares.length);
         Arrays.sort(current);
@@ -36,17 +34,11 @@ public class Board20D extends BoardBase implements Board {
         while (last >= 0 && current[last].cardinal() == 0) last--;
         return this;
     }
-
+*/
     // ////////////////////////////////////////////////////////
     // Private code
     // ////////////////////////////////////////////////////////
 
-    private int[] getDimensions(int pos) {
-        int[] dims = {0,0};
-        dims[0] = pos / CFG.CARD;
-        dims[1] = pos % CFG.CARD;
-        return dims;
-     }
      protected void markAsUsed (int pos, int value) {
          int[] axis = getDimensions(pos); // fila, columna
          int max;
@@ -56,7 +48,14 @@ public class Board20D extends BoardBase implements Board {
          max = x + CFG.CARD;
          for (int i = x; i < max; i++) squares[i].setUsed(value);
          // Eje y
-         max = (CFG.CARD * (CFG.CARD - 1)) + axis[1];
+         max = (CFG.CARD * CFG.CARD) + axis[1];
          for (int i = axis[1]; i < max; i += CFG.CARD) squares[i].setUsed(value);
      }
+    private int[] getDimensions(int pos) {
+        int[] dims = {0,0};
+        dims[0] = pos / CFG.CARD;
+        dims[1] = pos % CFG.CARD;
+        return dims;
+    }
+
 }

@@ -3,58 +3,66 @@
  */
 package com.sdp.sudoku;
 
-import com.sdp.sudoku.ctes.CDG;
-import com.sdp.sudoku.io.*;
 import com.sdp.sudoku.boards.*;
+import com.sdp.sudoku.ctes.CDG;
+import com.sdp.sudoku.io.Output;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Sudoku {
-    Board board;
+    Board solution;
     Output out = Output.getInstance();
-    int ntree = 0;
-    StringBuilder stree = new StringBuilder("1 ");
+
+    static int jugada = 0;
 
     public int playGame(Integer[] data) {
-        Board board = prepareBoard(data);
-        return play(board, 0);
+        this.solution = prepareBoard(data);
+        return play(solution);
     }
     public Board getBoard() {
-        return board;
+        return solution;
     }
-    private int play (Board board, int tree) {
-        Board pBoard = null;
+    private int play (Board board) {
         int rc = CDG.NEXT;
-        while (rc == CDG.NEXT) {
-            List<Square> options = board.getCandidates();
-            if (options.size() == 0) return CDG.DONE;
-            switch (options.get(0).cardinal2()) {
-                case 0: rc = CDG.FAIL; break;
-                case 1: rc = processEquivalentBoard(board, options); break;
-                default:
-                    pBoard = board.copy();
-                    List<Square> copyList = new ArrayList<>(options);
-                    pBoard.setTree(ntree);
 
-                    for (int i = 0; i < copyList.get(0).cardinal2(); i++) {
-                        Board iboard = pBoard.copy();
-                        iboard.bet(i);  // Ponemos el valor como unica opcion
-                        if (play(iboard, iboard.getTree()) == CDG.DONE) return CDG.DONE;
-                    }
-                    rc = CDG.FAIL;
+        while (rc == CDG.NEXT) {
+            jugada++;
+            this.solution = board;
+
+            List<Square> options = board.getCandidates();
+            switch (options.size()) {
+                case  0: return CDG.DONE;
+                case  1: rc = playOption (options, board); break;
+                default: rc = board.round(options); break;
             }
         }
         return rc;
     }
-    private int processEquivalentBoard(Board board, List<Square> options) {
-        for (Square square : options) square.setPlaying();
-        return board.round(null);
+    private int playOption(List<Square> options, Board board) {
+        Board pBoard = null;
+        int rc;
+        switch (options.get(0).cardinal()) {
+            case 0: rc = CDG.FAIL; break;
+            case 1: rc = board.round(options); break;
+            default:
+//                out.setMessage("Creando arbol " + (board.getMaxTree() + 1) + " con " + options.get(0).cardinal() + "opciones");
+                pBoard = board.copy(true);
+                List<Square> copyList = new ArrayList<>(options);
+
+                for (int i = 0; i < copyList.get(0).cardinal(); i++) {
+//                    System.out.println("Jugando opcion " + copyList.get(0).getOptions()[i] + " en " + copyList.get(0).getPos());
+                    Board iboard = pBoard.copy(false);
+                    iboard.bet(i);  // Ponemos el valor como unica opcion
+                    if (play(iboard) == CDG.DONE) return CDG.DONE;
+                }
+                rc = CDG.FAIL;
+        }
+        return rc;
     }
     private Board prepareBoard(Integer[] data) {
         BoardFactory factory = new BoardFactory();
         Board board = factory.getBoard(data);
-        board.init();
         return board;
     }
 }

@@ -9,66 +9,29 @@ import java.util.List;
 public class Board25D extends  BoardBase implements Board {
     public Board25D(Integer[] data) {
         squares = new Square[CFG.CARD * CFG.CARD];
-        current = new Square[CFG.CARD * CFG.CARD];
-
-        for (int i = 0; i < CFG.CARD * CFG.CARD; i++) squares[i] = new Square(i);
-        for (int i = 0; i < data.length; i++)       {
-            if (i == 30)
-                System.out.println("Indice " + i);
-            if (data[i] != 0) setConstraint(i, data[i]);
-        }
+        initBoard(data);
     }
     // Contructor de copia
-    public Board25D(Board25D board) {
+    public Board25D(Board25D board, boolean nextTree) {
+        squares = new Square[CFG.CARD * CFG.CARD];
+
+        this.tree = board.getTree();
+        if (nextTree)  {
+            this.tree++;
+            if (this.maxTree < this.tree) this.maxTree = this.tree;
+        }
         Square[] old = board.getBoard();
         for (int i = 0; i < squares.length; i++) squares[i] = new Square(old[i]);
-        init();
+        initCurrent();
     }
 
-    public Board copy() {
-        return new Board25D(this);
-    }
-    public Board recalculate () {
-        setSquaresAsPlayed();
-        current = Arrays.copyOfRange(current,0,last);
-        Arrays.sort(current);
-        while (last >= 0 && current[last].cardinality() == 0) last--;
-/*
-        Square tmp;
-        for (int i = 0; i < last; i++) {
-            if (current[i].cardinality() <= current[i+1].cardinality()) {
-                tmp = current[i];
-                current[i] = current[i+1];
-                current[i+1] = tmp;
-            }
-        }
-        while (last >= 0 && current[last].cardinality() == 0) last--;
-
- */
-        return this;
-    }
-    public Board bet (int idx) {
-        Square curr = current[last];
-        curr.setBet(curr.getOptions()[idx]);
-        return this;
-    }
-    public Board25D init() {
-        System.arraycopy(squares, 0, current, 0, squares.length);
-        Arrays.sort(current);
-        last = current.length - 1;
-        while (last >= 0 && current[last].cardinality() == 0) last--;
-        return this;
+    public Board copy(boolean nextTree) {
+        return new Board25D(this, nextTree);
     }
     // ////////////////////////////////////////////////////////
     // Private code
     // ////////////////////////////////////////////////////////
 
-    private void setSquares (Square[] squares) {
-        this.squares = squares;
-    }
-    private void setCurrent (Square[] squares) {
-        this.current = squares;
-    }
     private int[] getDimensions(int pos) {
         int[] dims = {0,0};
         dims[0] = pos / CFG.CARD;

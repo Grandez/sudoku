@@ -3,7 +3,6 @@ package com.sdp.sudoku.boards;
 import com.sdp.sudoku.config.CFG;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Board25D extends  BoardBase implements Board {
@@ -40,12 +39,15 @@ public class Board25D extends  BoardBase implements Board {
     }
     protected void markAsUsed (int pos, int value) {
         int[] axis = getDimensions(pos); // fila, columna
+        int max;
+
         // Eje x
         int x = axis[0] * CFG.CARD;
-        for (int i = x; i < CFG.CARD; i++) squares[i].setUsed(value);
+        max = x + CFG.CARD;
+        for (int i = x; i < max; i++) squares[i].setUsed(value);
         // Eje y
-        int maxY = (CFG.CARD * (CFG.CARD - 1)) + axis[1];
-        for (int i = axis[1]; i < maxY; i += CFG.CARD) squares[i].setUsed(value);
+        max = (CFG.CARD * CFG.CARD) + axis[1];
+        for (int i = axis[1]; i < max; i += CFG.CARD) squares[i].setUsed(value);
         // Cuadrados internos
         for (Integer i : getSquaresOfSquare(axis, pos)) squares[i].setUsed(value);
     }
@@ -63,7 +65,8 @@ public class Board25D extends  BoardBase implements Board {
         int yMax = axis[1] + block;
         for (int i = axis[0]; i < xMax; i++) {
             for (int j = axis[1]; j < yMax; j++) {
-                squares.add((i * block) + (j * block));
+                int idx = (i * CFG.CARD) + j;
+                squares.add(idx);
             }
         }
         return squares;

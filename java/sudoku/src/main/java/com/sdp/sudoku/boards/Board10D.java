@@ -1,4 +1,9 @@
 package com.sdp.sudoku.boards;
+/**
+ * Board10D
+ *
+ * Clase que implementa un tablero de una dimension
+ */
 
 import com.sdp.sudoku.config.CFG;
 
@@ -7,11 +12,7 @@ import java.util.Arrays;
 public class Board10D extends BoardBase implements Board {
     public Board10D(Integer[] data) {
         squares = new Square[CFG.CARD];
-
-        for (int i = 0; i < squares.length; i++) squares[i] = new Square(i);
-        for (int i = 0; i < data.length; i++) {
-            if (data[i] != 0) setConstraint(i, data[i]);
-        }
+        initBoard(data);
     }
     // Contructor de copia
     public Board10D(Board10D board, boolean nextTree) {

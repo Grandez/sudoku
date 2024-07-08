@@ -1,4 +1,10 @@
 package com.sdp.sudoku.boards;
+/**
+ * Representa una casilla del tablero
+ * type: Indica el estado de la casilla
+ * pos: Posicion lineal en el tablero
+ * value: Valor de la casilla (0 - Sin jugar)
+ */
 
 import com.sdp.sudoku.config.CFG;
 

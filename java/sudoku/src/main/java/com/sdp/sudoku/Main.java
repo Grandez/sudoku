@@ -39,7 +39,9 @@ public class Main {
         printer.print("Resultado: ");
         printer.println((rc == CDG.DONE) ? ANSI.use(ANSI.BOLD,"Resuelto")
                                          : ANSI.use(ANSI.RED, "Erroneo"));
-        printer.print("Arboles:    ");
+        printer.print("Arboles:   ");
+        printer.println(ANSI.use(ANSI.BOLD, Long.toString(board.getMaxTree())));
+        printer.print("Jugadas:   ");
         printer.println(ANSI.use(ANSI.BOLD, Long.toString(board.getMaxTree())));
         printer.print("Tiempo:    ");
         printer.println(ANSI.use(ANSI.BOLD, Long.toString(System.currentTimeMillis() - start) + " ms"));

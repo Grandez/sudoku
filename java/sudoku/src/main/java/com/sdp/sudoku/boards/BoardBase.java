@@ -1,6 +1,14 @@
 package com.sdp.sudoku.boards;
+/**
+ * BoardBase
+ * Representa el tablero y el estado de sus casillas en un momento determinado
+ *
+ * Cada posible tipo de tablero implementa:
+ *  1. Su constructor en funcion de los datos recibidos
+ *  2. Su constructor de copia
+ *  3. El metodo para jugar un determinado valor en una determinada casilla (markAsUsed)
+ */
 
-import com.sdp.sudoku.config.CFG;
 import com.sdp.sudoku.ctes.CDG;
 import com.sdp.sudoku.io.Output;
 
@@ -10,7 +18,7 @@ import java.util.List;
 
 public abstract class BoardBase {
     protected Square[] squares;
-    protected Square[] current;
+    private   Square[] current;
 
     protected int status = CDG.NEXT;
     protected int last;
@@ -20,9 +28,18 @@ public abstract class BoardBase {
 
     public    abstract Board copy(boolean nextTree);
 
+    /**
+     * Devuelve el tablero actual
+     * @return Array de las casillas del tablero
+     */
     public Square[] getBoard() {
         return squares;
     }
+
+    /**
+     * Devuelve la lista de casillas a jugar en una determinada ronda
+     * @return Lista de casillas a jugar
+     */
     public List<Square> getCandidates() {
         List<Square> candidates = new ArrayList<>();
         if (last == -1) return candidates;
@@ -36,6 +53,10 @@ public abstract class BoardBase {
         candidates.add(current[last]);
         return candidates;
     }
+    /**
+     * Realiza una jugada con las casillas indicadas
+     * @return Lista de casillas a jugar
+     */
     public int round (List<Square> options) {
         Output out = Output.getInstance();
         finishPreviousRound();
@@ -49,6 +70,16 @@ public abstract class BoardBase {
         int rc = recalculate();
         return rc;
     }
+
+    /**
+     * Cuando una casilla puede tener varias opciones
+     * Apuesta por una de ellas
+     * Ejemplo:
+     * Si la casilla puede tener los valores: 3,5 o 7
+     * Modifica la casilla para que su unica opcion (la apuesta) sea, por ejemplo, 5
+     * @param idx Indica el indice de la opcion a la que se apuesta
+     * @return
+     */
     public Board bet (int idx) {
         Square curr = current[last];
         curr.setBet(curr.getOptions()[idx]);
@@ -75,7 +106,17 @@ public abstract class BoardBase {
         last = current.length - 1;
         while (last >= 0 && current[last].cardinal() == 0) last--;
     }
+    protected void copyObject(Board board, boolean nextTree) {
+        this.tree = board.getTree();
+        if (nextTree)  {
+            this.tree++;
+            if (this.maxTree < this.tree) this.maxTree = this.tree;
+        }
+        Square[] old = board.getBoard();
+        for (int i = 0; i < squares.length; i++) squares[i] = new Square(old[i]);
+        initCurrent();
 
+    }
     protected void setConstraint(int pos, int value) {
         markAsUsed(pos, value);
         squares[pos].setConstraint(value);
@@ -84,7 +125,6 @@ public abstract class BoardBase {
         for (Square square : squares) if (square.getType() == Square.TYPE.PLAYING) square.setType(Square.TYPE.PLAYED);
     }
     private int recalculate () {
-
         if (last == -1) return CDG.DONE;
 
         current = Arrays.copyOf(current, last + 1);

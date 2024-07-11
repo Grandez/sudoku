@@ -1,11 +1,6 @@
----
-title: "Grados de libertad"
-format: html
----
+## Grados de libertad
 
-## Quarto
-
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+En estadística, grados de libertad, expresión introducida por Ronald Fisher, dice que, de un conjunto de observaciones, los grados de libertad están dados por el número de valores que pueden ser asignados de forma arbitraria, antes de que el resto de las variables tomen un valor automáticamente, producto de establecerse las que son libres; esto, con el fin de compensar e igualar un resultado el cual se ha conocido previamente. Se encuentran mediante la fórmula n − r {\displaystyle n-r}, donde n es el número de sujetos en la muestra que pueden tomar un valor y r es el número de sujetos cuyo valor dependerá del que tomen los miembros de la muestra que son libres. También pueden ser representados por k − r {\displaystyle k-r}, donde k {\displaystyle k}= número de grupos; esto, cuando se realizan operaciones con grupos y no con sujetos individuales. 
 
 ## Running Code
 

@@ -1,19 +1,19 @@
-package com.sdp.sudoku.io;
+package com.sdp.sudoku.io.console;
 
 import com.sdp.sudoku.ctes.ANSI;
 import com.sdp.sudoku.config.CFG;
 import com.sdp.sudoku.ctes.BOX;
-import com.sdp.sudoku.boards.Square;
+import com.sdp.sudoku.core.Square;
 
 import java.util.*;
 
 import static java.lang.Math.min;
 
-public class Output {
+public class ConsoleOutput {
     int COLUMN = 40;
     int LENGTH = 133;
 
-    public static Output instance;
+    public static ConsoleOutput instance;
     private static int calls = 0;
 /*
     public static final String ANSI_RESET = "\u001B[0m";
@@ -31,15 +31,15 @@ public class Output {
     Square[] board;
     PPrinter printer = new PPrinter();
 
-    public static Output getInstance() {
-       if (instance == null) instance = new Output();
+    public static ConsoleOutput getInstance() {
+       if (instance == null) instance = new ConsoleOutput();
        return instance;
     }
-    public Output init() {
+    public ConsoleOutput init() {
         right = new ArrayList<>();
         return this;
     }
-    public Output setMessage(String txt) {
+    public ConsoleOutput setMessage(String txt) {
         System.out.println(txt);
         right.add(new StringBuffer(txt));
         return this;
@@ -86,24 +86,25 @@ public class Output {
     }
     String[] makeLeftArray(Square[] board) {
         List<String> lines = new ArrayList<>();
-//        lines.add(lineSeparator(0));
+        lines.add(lineSeparator(0));
 
         int i = 0;
         int j = CFG.CARD;
         int l = 0;
         do {
-            StringBuilder line = new StringBuilder(String.format("%02d %c", l, BOX.VERT));
+            //StringBuilder line = new StringBuilder(String.format("%02d %c", l, BOX.VERT));
+            StringBuilder line = new StringBuilder("   ");
             l += 9;
-  //          line.append(BOX.VERT);
+            line.append(BOX.VERT);
             for (; i < j; i++) {
                 line.append(board[i].getValue() == 0 ? ' ' :  getSquareAsAnsi(board[i]));
-    //            line.append(BOX.VERT);
+                line.append(BOX.VERT);
             }
             lines.add(line.toString());
             j += CFG.CARD;
-//            if (i + 1 < board.length) lines.add(lineSeparator(1));
+            if (i + 1 < board.length) lines.add(lineSeparator(1));
         } while (i < board.length);
-//        lines.add(lineSeparator(2));
+        lines.add(lineSeparator(2));
         lines.add("                   ");
 
         return lines.toArray(new String[lines.size()]);

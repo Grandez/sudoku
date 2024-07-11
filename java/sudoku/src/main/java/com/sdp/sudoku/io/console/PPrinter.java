@@ -1,4 +1,4 @@
-package com.sdp.sudoku.io;
+package com.sdp.sudoku.io.console;
 
 import java.io.PrintWriter;
 

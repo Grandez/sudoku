@@ -2,29 +2,28 @@
  * Sudoku
  * Encapsula la representacion del juego
  */
-package com.sdp.sudoku;
+package com.sdp.sudoku.core;
 
 import com.sdp.sudoku.boards.*;
+import com.sdp.sudoku.config.GameDefinition;
 import com.sdp.sudoku.ctes.CDG;
-import com.sdp.sudoku.io.Output;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Sudoku {
     Board solution;
-    Output out = Output.getInstance();
+    // ConsoleOutput out = ConsoleOutput.getInstance();
 
     static int jugada = 0;
 
     /**
      * Crea un tablero con los datos aportados y lo juega
-     * @param data Datos iniciales del tablero
+     * @param game Informacion inicialedel tablero
      * @return 0 si ha encontrado la solucion
      */
-    public int playGame(Integer[] data) {
-        this.solution = prepareBoard(data);
-        out.print(solution.getBoard());
+    public int playGame(GameDefinition game) {
+        this.solution = prepareBoard(game);
         return play(solution);
     }
     /**
@@ -84,9 +83,9 @@ public class Sudoku {
         }
         return rc;
     }
-    private Board prepareBoard(Integer[] data) {
+    private Board prepareBoard(GameDefinition game) {
         BoardFactory factory = new BoardFactory();
-        Board board = factory.getBoard(data);
+        Board board = factory.getBoard(game);
         return board;
     }
 }

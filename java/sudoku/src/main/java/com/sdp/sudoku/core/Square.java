@@ -1,4 +1,4 @@
-package com.sdp.sudoku.boards;
+package com.sdp.sudoku.core;
 /**
  * Representa una casilla del tablero
  * type: Indica el estado de la casilla
@@ -20,6 +20,7 @@ public class Square implements Comparable<Square> {
     int    value = 0; // Valor actual
 
     Set<Integer> options = new HashSet<>();
+    int[] optionAsAscii = new int[256];
 
     public Square (int pos) {
         this.pos = pos;
